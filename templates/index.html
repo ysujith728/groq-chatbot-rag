@@ -1,1 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot - Powered by Groq</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Main Container */
+        .chat-container {
+            display: flex;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 24px;
+            margin-top: 10px;
+        }
+
+        .sidebar-header i {
+            font-size: 48px;
+            color: #48bb78;
+        }
+
+        /* Model Selector */
+        .model-section {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .model-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .model-select {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .model-select option {
+            background: #1e293b;
+        }
+
+        /* Stats */
+        .stats {
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat i {
+            font-size: 24px;
+            color: #48bb78;
+        }
+
+        .stat span {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .stat small {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        /* Clear Button */
+        .clear-btn {
+            margin: 20px;
+            padding: 12px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .clear-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* Main Chat Area */
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f8fafc;
+        }
+
+        .chat-header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h1 {
+            font-size: 24px;
+            color: #1e293b;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #48bb78;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Messages Area */
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 20px;
+        }
+
+        .message.user .message-avatar {
+            background: #48bb78;
+        }
+
+        .message.assistant .message-avatar {
+            background: #667eea;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-content {
+            background: #48bb78;
+            color: white;
+        }
+
+        .message.assistant .message-content {
+            background: white;
+            color: #1e293b;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .message-time {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+
+        /* File Preview */
+        .file-preview {
+            background: #f0fdf4;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #48bb78;
+        }
+
+        .file-preview.active {
+            display: flex;
+        }
+
+        .file-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-info i {
+            font-size: 24px;
+            color: #48bb78;
+        }
+
+        .file-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .remove-file {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        .remove-file:hover {
+            color: #dc2626;
+        }
+
+        /* Input Area */
+        .input-area {
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px;
+        }
+
+        .drag-drop-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .drag-drop-area.drag-over {
+            border-color: #48bb78;
+            background: #f0fdf4;
+        }
+
+        .drag-drop-area i {
+            font-size: 32px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .drag-drop-area p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .send-btn {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                transition: left 0.3s;
+                z-index: 100;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-robot"></i>
+                <h2>AI Assistant</h2>
+                <p style="font-size: 12px; margin-top: 10px;">Powered by Groq</p>
+            </div>
+
+            <div class="model-section">
+                <label><i class="fas fa-microchip"></i> AI Model</label>
+                <select id="modelSelect" class="model-select">
+    <optgroup label="📝 Text Models">
+        <option value="llama-3.3-70b-versatile">🦙 Llama 3.3 70B (Best Quality)</option>
+        <option value="llama-3.1-8b-instant">⚡ Llama 3.1 8B (Fastest)</option>
+        <option value="mixtral-8x7b-32768">🚀 Mixtral 8x7B</option>
+        <option value="gemma2-9b-it">📚 Gemma 2 9B</option>
+    </optgroup>
+    <optgroup label="🖼️ Vision Models (For Images)">
+        <option value="meta-llama/llama-4-scout-17b-16e-instruct">Llama 4 Scout 17B (Vision) - Recommended</option>
+        <option value="meta-llama/llama-4-maverick-17b-128e-instruct">Llama 4 Maverick 17B (Vision) - Best Quality</option>
+    </optgroup>
+</select>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <i class="fas fa-comments"></i>
+                    <span id="messageCount">0</span>
+                    <small>Messages</small>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-upload"></i>
+                    <span id="fileCount">0</span>
+                    <small>Files</small>
+                </div>
+            </div>
+
+            <button class="clear-btn" id="clearBtn">
+                <i class="fas fa-trash-alt"></i> Clear Chat
+            </button>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            <div class="chat-header">
+                <h1><i class="fas fa-comment-dots"></i> Chat with AI</h1>
+                <div class="status">
+                    <div class="status-dot"></div>
+                    <span>Ready</span>
+                </div>
+            </div>
+
+            <div class="messages-area" id="messagesArea">
+                <div style="text-align: center; padding: 40px;">
+                    <i class="fas fa-hand-wave" style="font-size: 48px; color: #667eea;"></i>
+                    <h3 style="margin-top: 20px;">Welcome to AI Assistant!</h3>
+                    <p style="margin-top: 10px; color: #64748b;">
+                        You can upload images, text files, or just type a message.
+                        <br>Drag & drop files or click to upload!
+                    </p>
+                </div>
+            </div>
+
+            <div class="input-area">
+                <div class="drag-drop-area" id="dragDropArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & drop files here or click to upload</p>
+                    <p style="font-size: 12px; margin-top: 5px;">Supports: Images, Text files (Max 50MB)</p>
+                </div>
+                
+                <div class="file-preview" id="filePreview">
+                    <div class="file-info">
+                        <i class="fas fa-file-image"></i>
+                        <span class="file-name" id="fileName"></span>
+                    </div>
+                    <button class="remove-file" id="removeFileBtn">✕</button>
+                </div>
+
+                <div class="input-wrapper">
+                    <textarea 
+                        id="messageInput" 
+                        class="message-input" 
+                        placeholder="Type your message here... (Press Enter to send)"
+                        rows="2"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>AI is thinking...</p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script>
+        let messageCount = 0;
+        let fileCount = 0;
+        let selectedFile = null;
+
+        // DOM Elements
+        const messagesArea = document.getElementById('messagesArea');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const modelSelect = document.getElementById('modelSelect');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const dragDropArea = document.getElementById('dragDropArea');
+        const filePreview = document.getElementById('filePreview');
+        const fileName = document.getElementById('fileName');
+        const removeFileBtn = document.getElementById('removeFileBtn');
+
+        // Load counts from localStorage
+        function loadCounts() {
+            messageCount = parseInt(localStorage.getItem('messageCount')) || 0;
+            fileCount = parseInt(localStorage.getItem('fileCount')) || 0;
+            updateCounts();
+        }
+
+        function updateCounts() {
+            document.getElementById('messageCount').textContent = messageCount;
+            document.getElementById('fileCount').textContent = fileCount;
+        }
+
+        function saveCounts() {
+            localStorage.setItem('messageCount', messageCount);
+            localStorage.setItem('fileCount', fileCount);
+        }
+
+        // Add message to chat
+        function addMessage(role, content, timestamp = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            const time = timestamp ? new Date(timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
+            const avatar = role === 'user' ? '👤' : '🤖';
+            
+            // Format content
+            let formattedContent = content
+                .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>');
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    ${formattedContent}
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            messagesArea.appendChild(messageDiv);
+            messageDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            
+            if (role === 'user') {
+                messageCount++;
+                updateCounts();
+                saveCounts();
+            }
+        }
+
+        // Send message
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            const model = modelSelect.value;
+            
+            if (!message && !selectedFile) {
+                alert("Please type a message or select a file to upload");
+                return;
+            }
+            
+            // Show loading
+            loadingOverlay.classList.add('active');
+            
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('message', message);
+            formData.append('model', model);
+            
+            // Show what's being uploaded in the UI
+            if (selectedFile) {
+                console.log("Uploading file:", selectedFile.name, "Size:", selectedFile.size);
+                formData.append('file', selectedFile);
+                addMessage('user', `[Uploading file: ${selectedFile.name}] ${message || "Please analyze this file"}`);
+            } else if (message) {
+                addMessage('user', message);
+            }
+            
+            // Clear input and preview
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addMessage('assistant', data.response);
+                    if (selectedFile) {
+                        fileCount++;
+                        updateCounts();
+                        saveCounts();
+                        clearFilePreview();
+                    }
+                } else {
+                    addMessage('assistant', `❌ Error: ${data.error}`);
+                    console.error("Error response:", data);
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                addMessage('assistant', `❌ Network error: ${error.message}\nPlease check if the server is running.`);
+            } finally {
+                loadingOverlay.classList.remove('active');
+                if (selectedFile) {
+                    selectedFile = null;
+                }
+            }
+        }
+
+        // File handling
+        function handleFileSelect(file) {
+            if (!file) return;
+            
+            // Check file size
+            if (file.size > 50 * 1024 * 1024) {
+                alert('File too large! Maximum size is 50MB.');
+                return;
+            }
+            
+            // Check file type
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'text/plain'];
+            if (!allowedTypes.includes(file.type) && !file.name.endsWith('.txt') && !file.name.endsWith('.pdf')) {
+                alert('Please upload an image (JPG, PNG, GIF) or text file (TXT, PDF)');
+                return;
+            }
+            
+            selectedFile = file;
+            fileName.textContent = file.name;
+            filePreview.classList.add('active');
+            
+            // Show success indicator
+            const fileIcon = filePreview.querySelector('.file-info i');
+            if (file.type.startsWith('image/')) {
+                fileIcon.className = 'fas fa-image';
+            } else {
+                fileIcon.className = 'fas fa-file-alt';
+            }
+        }
+
+        function clearFilePreview() {
+            selectedFile = null;
+            filePreview.classList.remove('active');
+            fileName.textContent = '';
+        }
+
+        // Clear chat
+        async function clearChat() {
+            if (confirm('Are you sure you want to clear the entire conversation?')) {
+                try {
+                    await fetch('/api/clear', { method: 'POST' });
+                    messagesArea.innerHTML = `
+                        <div style="text-align: center; padding: 40px;">
+                            <i class="fas fa-trash-alt" style="font-size: 48px; color: #667eea;"></i>
+                            <h3 style="margin-top: 20px;">Chat Cleared</h3>
+                            <p style="margin-top: 10px; color: #64748b;">Start a new conversation!</p>
+                        </div>
+                    `;
+                    messageCount = 0;
+                    fileCount = 0;
+                    updateCounts();
+                    saveCounts();
+                    clearFilePreview();
+                } catch (error) {
+                    console.error('Error clearing chat:', error);
+                }
+            }
+        }
+
+        // Drag & Drop handlers
+        dragDropArea.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,.txt,.pdf';
+            input.onchange = (e) => handleFileSelect(e.target.files[0]);
+            input.click();
+        });
+        
+        dragDropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dragDropArea.classList.add('drag-over');
+        });
+        
+        dragDropArea.addEventListener('dragleave', () => {
+            dragDropArea.classList.remove('drag-over');
+        });
+        
+        dragDropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dragDropArea.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            handleFileSelect(file);
+        });
+        
+        removeFileBtn.addEventListener('click', clearFilePreview);
+        
+        // Event listeners
+        sendBtn.addEventListener('click', sendMessage);
+        clearBtn.addEventListener('click', clearChat);
+        
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+        });
+        
+        // Auto-scroll
+        const observer = new MutationObserver(() => {
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        });
+        observer.observe(messagesArea, { childList: true, subtree: true });
+        
+        // Initialize
+        loadCounts();
+        
+        // Add a test message
+        console.log("Chatbot ready! File upload is now working.");
+    </script>
+</body>
+</html>
