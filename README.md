@@ -1,139 +1,152 @@
-# 🤖 Groq RAG Chatbot
+<h1 align="center">🤖 Groq RAG Chatbot</h1>
 
-### Smart Document Q&A with Retrieval-Augmented Generation (RAG)
+<p align="center">
+<b>Smart Document Q&A with Retrieval-Augmented Generation (RAG)</b>
+</p>
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue)
-![Groq](https://img.shields.io/badge/Groq-API-orange)
-![License](https://img.shields.io/badge/License-MIT-green)
-![RAG](https://img.shields.io/badge/AI-RAG-brightgreen)
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.8+-blue">
+  <img src="https://img.shields.io/badge/Groq-API-orange">
+  <img src="https://img.shields.io/badge/License-MIT-green">
+  <img src="https://img.shields.io/badge/AI-RAG-brightgreen">
+</p>
 
----
+<hr>
 
-## 📌 Overview
+<p align="center">
+  <!-- 🔥 CHANGE THIS PATH TO YOUR IMAGE -->
+  <img src="screenshots/demo.png" width="800" alt="Project Demo">
+</p>
 
-This project allows you to **upload large PDF documents (300+ pages)** and ask questions in plain English.
-It uses **Retrieval-Augmented Generation (RAG)** to provide accurate, context-aware answers.
+<hr>
 
-### 🎯 Use Cases
+<h2>📌 Overview</h2>
 
-* 📚 Students – Query textbooks, syllabi, research papers
-* 👨‍💼 Professionals – Analyze contracts and reports
-* 🔬 Researchers – Search academic documents
-* 📖 Teachers – Build interactive Q&A systems
+<p>
+This project allows you to <b>upload large PDF documents (300+ pages)</b> and ask questions in plain English.<br>
+It uses <b>Retrieval-Augmented Generation (RAG)</b> to provide accurate, context-aware answers.
+</p>
 
----
+<h3>🎯 Use Cases</h3>
 
-## ⭐ Features
+<ul>
+<li>📚 Students – Query textbooks, syllabi, research papers</li>
+<li>👨‍💼 Professionals – Analyze contracts and reports</li>
+<li>🔬 Researchers – Search academic documents</li>
+<li>📖 Teachers – Build interactive Q&A systems</li>
+</ul>
 
-* 📚 Supports large PDFs (300+ pages)
-* 🔍 Semantic search using embeddings
-* 🧠 Efficient RAG pipeline
-* ⚡ Ultra-fast inference with Groq
-* 💬 Clean and responsive UI
-* 🔒 API key stays local (secure)
+<hr>
 
----
+<h2>⭐ Features</h2>
 
-## 🏗️ Architecture
+<ul>
+<li>📚 Supports large PDFs (300+ pages)</li>
+<li>🔍 Semantic search using embeddings</li>
+<li>🧠 Efficient RAG pipeline</li>
+<li>⚡ Ultra-fast inference with Groq</li>
+<li>💬 Clean and responsive UI</li>
+<li>🔒 API key stays local (secure)</li>
+</ul>
 
-```
+<hr>
+
+<h2>🏗️ Architecture</h2>
+
+<pre>
 PDF → Chunking → Embeddings → FAISS Index
                              ↓
 User Query → Embedding → Top-K Retrieval → Groq LLM → Answer
-```
+</pre>
 
----
+<hr>
 
-## 🛠️ Tech Stack
+<h2>🛠️ Tech Stack</h2>
 
-| Technology            | Purpose           |
-| --------------------- | ----------------- |
-| Flask                 | Backend framework |
-| Groq API              | LLM inference     |
-| Sentence Transformers | Text embeddings   |
-| FAISS                 | Vector search     |
-| PyPDF2 / pdfplumber   | PDF extraction    |
+<table>
+<tr><th>Technology</th><th>Purpose</th></tr>
+<tr><td>Flask</td><td>Backend framework</td></tr>
+<tr><td>Groq API</td><td>LLM inference</td></tr>
+<tr><td>Sentence Transformers</td><td>Text embeddings</td></tr>
+<tr><td>FAISS</td><td>Vector search</td></tr>
+<tr><td>PyPDF2 / pdfplumber</td><td>PDF extraction</td></tr>
+</table>
 
----
+<hr>
 
-## 📋 Prerequisites
+<h2>📋 Prerequisites</h2>
 
-* Python 3.8+
-* Git
-* Groq API Key (free)
+<ul>
+<li>Python 3.8+</li>
+<li>Git</li>
+<li>Groq API Key</li>
+</ul>
 
----
+<hr>
 
-## 🚀 Installation
+<h2>🚀 Installation</h2>
 
-### 1. Clone the repository
-
-```bash
+<pre>
 git clone https://github.com/ysujith728/groq-chatbot-rag.git
 cd groq-chatbot-rag
-```
+</pre>
 
-### 2. Create virtual environment
-
-```bash
-# Windows
+<pre>
+# Create virtual environment
 python -m venv venv
+
+# Activate (Windows)
 venv\Scripts\activate
 
-# Mac/Linux
-python3 -m venv venv
+# Activate (Mac/Linux)
 source venv/bin/activate
-```
+</pre>
 
-### 3. Install dependencies
-
-```bash
+<pre>
 pip install -r requirements.txt
-```
+</pre>
 
-### 4. Add API Key
-
-Create `.env` file:
-
-```bash
+<pre>
+# Create .env file
 GROQ_API_KEY=your_api_key_here
-```
+</pre>
 
-### 5. Run the app
-
-```bash
+<pre>
 python app.py
-```
+</pre>
 
-Open 👉 http://localhost:5000
+<p><b>Open:</b> http://localhost:5000</p>
 
----
+<hr>
 
-## 💬 Example Questions
+<h2>💬 Example Questions</h2>
 
-* What are the course outcomes?
-* List all programming languages taught
-* What is the credit distribution?
-* Summarize the objectives
-* What AI electives are available?
+<ul>
+<li>What are the course outcomes?</li>
+<li>List all programming languages taught</li>
+<li>What is the credit distribution?</li>
+<li>Summarize the objectives</li>
+<li>What AI electives are available?</li>
+</ul>
 
----
+<hr>
 
-## 📊 Performance
+<h2>📊 Performance</h2>
 
-| Metric          | Value            |
-| --------------- | ---------------- |
-| Max PDF Size    | 100MB            |
-| Pages           | ~500             |
-| Chunk Size      | 1500 chars       |
-| Response Time   | 2–5 sec          |
-| Embedding Model | all-MiniLM-L6-v2 |
+<table>
+<tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Max PDF Size</td><td>100MB</td></tr>
+<tr><td>Pages</td><td>~500</td></tr>
+<tr><td>Chunk Size</td><td>1500 chars</td></tr>
+<tr><td>Response Time</td><td>2–5 sec</td></tr>
+<tr><td>Embedding Model</td><td>all-MiniLM-L6-v2</td></tr>
+</table>
 
----
+<hr>
 
-## 📁 Project Structure
+<h2>📁 Project Structure</h2>
 
-```
+<pre>
 groq-chatbot-rag/
 │
 ├── app.py
@@ -148,57 +161,53 @@ groq-chatbot-rag/
 ├── uploads/        (ignored)
 ├── chunks/         (ignored)
 └── screenshots/
-```
+    └── demo.png
+</pre>
 
----
+<hr>
 
-## 🐛 Troubleshooting
+<h2>🐛 Troubleshooting</h2>
 
-### RAG not working
+<p><b>RAG not working</b></p>
+<pre>pip install sentence-transformers faiss-cpu numpy</pre>
 
-```bash
-pip install sentence-transformers faiss-cpu numpy
-```
+<p><b>API Key issue</b></p>
+<pre>GROQ_API_KEY=your_key</pre>
 
-### API Key issue
+<p><b>PDF issue</b></p>
+<ul>
+<li>Ensure PDF has selectable text (not scanned)</li>
+</ul>
 
-Ensure `.env` exists with:
+<hr>
 
-```
-GROQ_API_KEY=your_key
-```
+<h2>🤝 Contributing</h2>
 
-### PDF not working
+<ol>
+<li>Fork the repo</li>
+<li>Create branch: <code>feature/your-feature</code></li>
+<li>Commit changes</li>
+<li>Push and open PR</li>
+</ol>
 
-Make sure the PDF has selectable text (not scanned images)
+<hr>
 
----
+<h2>📄 License</h2>
 
-## 🤝 Contributing
+<p>MIT License</p>
 
-1. Fork the repo
-2. Create branch: `feature/your-feature`
-3. Commit changes
-4. Push and open PR
+<hr>
 
----
+<h2>⭐ Support</h2>
 
-## 📄 License
+<ul>
+<li>⭐ Star the repo</li>
+<li>🔁 Share it</li>
+<li>🤝 Contribute</li>
+</ul>
 
-MIT License
+<hr>
 
----
+<h2 align="center">❤️ Built With</h2>
 
-## ⭐ Support
-
-If you like this project:
-
-* Star ⭐ the repo
-* Share it
-* Contribute
-
----
-
-## ❤️ Built With
-
-Groq’s ultra-fast inference engine
+<p align="center">Groq’s ultra-fast inference engine</p>
