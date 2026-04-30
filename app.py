@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 import mimetypes
 import pickle
-
+ 
 load_dotenv()
 
 # Setup logging
